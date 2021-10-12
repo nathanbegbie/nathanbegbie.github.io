@@ -1,0 +1,18 @@
+name: Publish Pelican Site CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nelsonjchen/gh-pages-pelican-action@0.1.5
+        env:
+          PELICAN_THEME_FOLDER: custom_theme
+          GH_PAGES_CNAME: artificiallyintelligent.info
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
