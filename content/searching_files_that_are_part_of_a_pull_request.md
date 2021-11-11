@@ -131,7 +131,7 @@ To be completely honest, there may be a better/safer/more performant way - I'm s
 
 ```shell
 > PR_NUMBER=$(gh pr list | grep $(git branch --show-current) | awk '{print $1}') && \
-    gh pr view $(PR_NUMBER) --json files --jq '.files.[].path' | cat
+    gh pr view $PR_NUMBER --json files --jq '.files.[].path' | cat
 styles/index.css
 docs/style_guide.md
 README.md
@@ -146,7 +146,7 @@ We can pass each file name to `grep` using `xargs`:
 
 ```shell
 > PR_NUMBER=$(gh pr list | grep $(git branch --show-current) | awk '{print $1}') && \
-    gh pr view $(PR_NUMBER) --json files --jq '.files.[].path' | xargs grep #00FF00
+    gh pr view $PR_NUMBER --json files --jq '.files.[].path' | xargs grep #00FF00
 styles/index.css:      background-color: #00FF00;
 styles/index.css:      color: #00FF00;
 styles/index.css:      background-color: #00FF00;
