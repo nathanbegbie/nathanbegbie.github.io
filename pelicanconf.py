@@ -35,5 +35,5 @@ DEFAULT_PAGINATION = False
 # RELATIVE_URLS = True
 
 THEME = "./custom_theme"
-BIO = "Data Science for those who are not sure they know, y'know?"
+BIO = "Data Science for those who are not sure that they know, y'know?"
 PROFILE_IMAGE = "profile.png"
