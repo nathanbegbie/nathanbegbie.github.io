@@ -13,6 +13,14 @@
 
         <title>{% block title %}{{ SITENAME }}{% endblock title %}</title>
 
+        {% if BEAM_ANALYTICS_DATA_TOKEN %}
+        <script
+            src="https://beamanalytics.b-cdn.net/beam.min.js"
+            data-token="{{ BEAM_ANALYTICS_DATA_TOKEN }}"
+            async
+        ></script>
+        {% endif %}
+
         <!-- CSS -->
         <link href="//fonts.googleapis.com/" rel="dns-prefetch" />
         <link
