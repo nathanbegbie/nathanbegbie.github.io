@@ -1,15 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- #
-
-AUTHOR = "Nathan Begbie"
-SITENAME = "Artificially Intelligent"
+AUTHOR = 'Nathan Begbie'
+SITENAME = 'Artificially Intelligent'
 SITEURL = ""
 
 PATH = "content"
 
-TIMEZONE = "Europe/London"
+TIMEZONE = 'Africa/Nairobi'
 
-DEFAULT_LANG = "en"
+DEFAULT_LANG = 'en'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -27,13 +24,12 @@ LINKS = (
 )
 
 # Social widget
-SOCIAL = ()
+SOCIAL = (
+    ("You can add links in your config file", "#"),
+    ("Another social link", "#"),
+)
 
-DEFAULT_PAGINATION = False
+DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
-
-THEME = "./custom_theme"
-BIO = "Data Science for those who are not sure that they know, y'know?"
-PROFILE_IMAGE = "profile.png"
