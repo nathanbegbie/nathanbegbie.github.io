@@ -2,8 +2,6 @@ Title: Stop Teaching People Git
 Date: 2025-01-12 22:30
 Category: Data Science
 
-# Stop Teaching People Git
-
 A lot of people use Git. I'm not really sure how this happened, but it seems as though, as soon as we wanted to start *really* coding, someone, perhaps a teacher, colleague or YouTuber, told us that we needed to use Git to get our code places. So we did. Somehow, we're suddenly all fumbling around with the command line and blundering our way through these weird commands, until we're *just* good enough to do what needs to be done. As always, this has been captured with excellent wit by [XKCD](https://xkcd.com/1597/).
 
 So why stop teaching people Git? That was clickbait. Thank you for reading the first paragraph. I want more people using Git, not fewer. But I really do think that Git:
