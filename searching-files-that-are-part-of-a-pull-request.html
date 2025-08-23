@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                        <meta charset="utf-8" />
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                        <meta name="generator" content="Pelican" />
+                        <title>Searching Files that are part of a Pull Request</title>
+                        <link rel="stylesheet" href="/theme/css/main.css" />
+    <meta name="description" content="In this article, I'll combine a couple of helpful command line tools together. If you're not familiar with these tools, I have included the..." />
+        </head>
+
+        <body id="index" class="home">
+                <header id="banner" class="body">
+                        <h1><a href="/">Artificially Intelligent</a></h1>
+                        <nav><ul>
+                                                <li class="active"><a href="/category/data-science.html">Data Science</a></li>
+                        </ul></nav>
+                </header><!-- /#banner -->
+  <section id="content" class="body">
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="/searching-files-that-are-part-of-a-pull-request.html" rel="bookmark"
+             title="Permalink to Searching Files that are part of a Pull Request">Searching Files that are part of a Pull Request</a></h1>
+      </header>
+
+      <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2021-11-09T14:40:00+03:00">
+                Published: Tue 09 November 2021
+        </abbr>
+
+                <address class="vcard author">
+                        By                                 <a class="url fn" href="/author/nathan-begbie.html">Nathan Begbie</a>
+                </address>
+        <p>In <a href="/category/data-science.html">Data Science</a>.</p>
+        
+</footer><!-- /.post-info -->        <blockquote>
+<p>In this article, I'll combine a couple of helpful command line tools together. If you're not familiar with these tools, I have included the necessary links to help you get started. This is also specific to a unix environment - apologies to Windows users.</p>
+</blockquote>
+<p>Being able to use some command line tools can give us superpowers when it comes to quickly finding relevant material.
+Today I wanted to search only the files that had been changed within a particular pull request.
+If you're using the web tool, you can simply open the pull request <code>/files</code> tab and <code>cmd/ctrl + f</code> to find the code you're looking for.
+However, if you want to do this from the command line, it gets a bit more complicated.</p>
+<ul>
+<li>Git does not inherently 'know' what a pull request is, it's something that Github manages</li>
+<li>There doesn't seem to be an easy way to convert a branch name to a pull request number</li>
+<li>Shell commands. They get messy.</li>
+</ul>
+<p>I'll slowly build up and explain the command that I eventually ended up with.</p>
+<h2>Get a Pull Request ID from a branch name</h2>
+<p>Firstly, we're on a specific branch. To get the name of that branch we run:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>git<span class="w"> </span>branch<span class="w"> </span>--show-current
+reconfigure-styles
+</code></pre></div>
+
+<p>Then we need to link the branch name to the pull request.
+To get this information, we use the <a href="https://cli.github.com/"><code>gh command line tool</code></a> from Github.</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>list
+</code></pre></div>
+
+<p>This will launch an interactive shell that you will need to hit <code>q</code> to exit.
+It looks something like this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#1  Ensure Blog Publishes Correctly                         ensure-blog-publishes-correctly</span>
+<span class="c1">#5  Reconfigure styles of Blog                              reconfigure-styles</span>
+</code></pre></div>
+
+<p>If you want the output to appear directly on the command line, we can pipe the results of the <code>cat</code> command like so:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
+<span class="m">1</span><span class="w">  </span>Ensure<span class="w"> </span>Blog<span class="w"> </span>Publishes<span class="w"> </span>Correctly<span class="w">                         </span>ensure-blog-publishes-correctly
+<span class="m">5</span><span class="w">  </span>Reconfigure<span class="w"> </span>styles<span class="w"> </span>of<span class="w"> </span>Blog<span class="w">                              </span>reconfigure-styles
+</code></pre></div>
+
+<p>Great! So how do combine these bits of information together?
+We can use grep to filter the results using the current branch name:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>branch<span class="w"> </span>--show-current<span class="k">)</span>
+<span class="m">5</span><span class="w">  </span>Reconfigure<span class="w"> </span>styles<span class="w"> </span>of<span class="w"> </span>Blog<span class="w">                              </span>reconfigure-styles
+</code></pre></div>
+
+<p>Woohoo! But when we use <code>gh</code> it expects that we use <em>just</em> the PR number.
+To get this, we reach for the handy tool <code>awk</code>.
+<code>awk</code> is great for working with tabular data.
+It allows us to concisely request a specific column of data with <code>awk '{print $NUMBER_OF_COLUMN_WE_WANT}'</code>.
+In this case, we want the first column.</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>branch<span class="w"> </span>--show-current<span class="k">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span>
+<span class="m">5</span>
+</code></pre></div>
+
+<h2>Getting File Names from a Pull Request Number</h2>
+<p>So now we have the current PR number from the branch we currently have checked out.
+Next, we want to get all of the files that were changed within a particular PR.
+In this case, we can use <code>gh</code> in combination with a tool called <code>jq</code> to get all of the file names.
+I found <a href="https://stackoverflow.com/a/68682405/3623641">this answer on StackOverflow</a> immensely helpful and will attempt to break down what it suggests:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span><span class="m">5</span><span class="w"> </span>--json<span class="w"> </span>files<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.files.[].path&#39;</span>
+</code></pre></div>
+
+<p><code>gh pr view 2615</code> just gives us details about the pull request in the command line.
+But here we want to be more specific about the information we want back.
+So we request a JSON response with details about the <code>files</code> in the pull request.
+Hence the <code>--json files</code>.
+(I also pipe to <code>cat</code> here to avoid the interactive shell)</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span><span class="m">5</span><span class="w"> </span>--json<span class="w"> </span>files<span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;files&quot;</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;path&quot;</span>:<span class="w"> </span><span class="s2">&quot;styles/index.css&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;additions&quot;</span>:<span class="w"> </span><span class="m">110</span>,
+<span class="w">      </span><span class="s2">&quot;deletions&quot;</span>:<span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="o">}</span>,
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;path&quot;</span>:<span class="w"> </span><span class="s2">&quot;docs/style_guide.md&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;additions&quot;</span>:<span class="w"> </span><span class="m">22</span>,
+<span class="w">      </span><span class="s2">&quot;deletions&quot;</span>:<span class="w"> </span><span class="m">5</span>
+<span class="w">    </span><span class="o">}</span>,
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;path&quot;</span>:<span class="w"> </span><span class="s2">&quot;README.md&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;additions&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">      </span><span class="s2">&quot;deletions&quot;</span>:<span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="o">}</span>,
+<span class="w">    </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;path&quot;</span>:<span class="w"> </span><span class="s2">&quot;index.html&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;additions&quot;</span>:<span class="w"> </span><span class="m">55</span>,
+<span class="w">      </span><span class="s2">&quot;deletions&quot;</span>:<span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">  </span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Finally, because we don't want to deal with a whole JSON blob we use the <a href="https://stedolan.github.io/jq/"><code>jq</code></a> flag which reference <a href="https://stedolan.github.io/jq/tutorial/">a very nifty tool</a> that helps us get information from JSON with very concise expressions.
+So by adding <code>--jq '.files.[].path'</code> we can extract all the paths in each JSON blob.</p>
+<p>This leaves us with:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span><span class="m">5</span><span class="w"> </span>--json<span class="w"> </span>files<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.files.[].path&#39;</span>
+styles/index.css
+docs/style_guide.md
+README.md
+index.html
+</code></pre></div>
+
+<p>We can then pipe these file names in to a tool like grep.
+But we need to combine our first two commands together.
+There are a few ways that we can do this, but I've chosen this way becaue I find that variable names help future me understand what the heck I was trying to do.
+To be completely honest, there may be a better/safer/more performant way - I'm sure someone can send me an angry email correcting me.</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span><span class="nv">PR_NUMBER</span><span class="o">=</span><span class="k">$(</span>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>branch<span class="w"> </span>--show-current<span class="k">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span><span class="nv">$PR_NUMBER</span><span class="w"> </span>--json<span class="w"> </span>files<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.files.[].path&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cat
+styles/index.css
+docs/style_guide.md
+README.md
+index.html
+</code></pre></div>
+
+<h2>Actually searching</h2>
+<p>We're almost there!
+Finally, we will embed the file names within the git grep command.
+We can pass each file name to <code>grep</code> using <code>xargs</code>:</p>
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span><span class="nv">PR_NUMBER</span><span class="o">=</span><span class="k">$(</span>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>branch<span class="w"> </span>--show-current<span class="k">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span><span class="nv">$PR_NUMBER</span><span class="w"> </span>--json<span class="w"> </span>files<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.files.[].path&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>grep<span class="w"> </span><span class="c1">#00FF00</span>
+styles/index.css:<span class="w">      </span>background-color:<span class="w"> </span><span class="c1">#00FF00;</span>
+styles/index.css:<span class="w">      </span>color:<span class="w"> </span><span class="c1">#00FF00;</span>
+styles/index.css:<span class="w">      </span>background-color:<span class="w"> </span><span class="c1">#00FF00;</span>
+styles/index.css:<span class="w">      </span>&lt;tagname<span class="w"> </span><span class="nv">style</span><span class="o">=</span><span class="s2">&quot;color:#00FF00;&quot;</span>&gt;
+</code></pre></div>
+
+<p>And there we have it!</p>
+<h2>Some Final Thoughts</h2>
+<p>I hope that this has deomnstrated how we can combine a couple of simple tools together to quickly accomplish what we want.
+There are some caveats though.
+This script is not robust to failure and follows what we call the 'happy path'.
+This means that if I'm in the wrong directory, or in a branch that doesn't have a pull request associated with it, the code breaks and I won't be explicitly told where or why.
+That's okay, because I don't expect anyone else to use this code in a production setting.
+If there were some more complicated logic flows, you might want to use a scripting language other than bash.
+This comes with tradeoffs though so think it through - would you trade off the 'it should run in most shells' for 'it clearly communciates why something is wrong'?</p>
+<p>Remeber, command line tools are really nifty and useful to combine, so use liberally to solve your specific use case.
+Just do not expect that everyone will understand or love your weird and wonderful code concoctions as much as you do. 😉</p>
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+                <section id="extras" class="body">
+                                <div class="blogroll">
+                                        <h2>links</h2>
+                                        <ul>
+                                                        <li><a href="https://getpelican.com/">Pelican</a></li>
+                                                        <li><a href="https://www.python.org/">Python.org</a></li>
+                                                        <li><a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
+                                                        <li><a href="#">You can modify those links in your config file</a></li>
+                                        </ul>
+                                </div><!-- /.blogroll -->
+                                <div class="social">
+                                        <h2>social</h2>
+                                        <ul>
+
+                                                        <li><a href="#">You can add links in your config file</a></li>
+                                                        <li><a href="#">Another social link</a></li>
+                                        </ul>
+                                </div><!-- /.social -->
+                </section><!-- /#extras -->
+
+                <footer id="contentinfo" class="body">
+                        <address id="about" class="vcard body">
+                                Proudly powered by <a rel="nofollow" href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a rel="nofollow" href="https://www.python.org/">Python</a>.
+                        </address><!-- /#about -->
+
+                        <p>The theme is by <a rel="nofollow" href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+                </footer><!-- /#contentinfo -->
+
+        </body>
+</html>

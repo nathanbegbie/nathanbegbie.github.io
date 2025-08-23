@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                        <meta charset="utf-8" />
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                        <meta name="generator" content="Pelican" />
+                        <title>Why You Need Pipelines with SKLearn</title>
+                        <link rel="stylesheet" href="/theme/css/main.css" />
+    <meta name="description" content="SKLearn is an immensley popular tool for machine learning. One of its slightly more unwieldy tools is pipelines. It is also overlooked when first..." />
+        </head>
+
+        <body id="index" class="home">
+                <header id="banner" class="body">
+                        <h1><a href="/">Artificially Intelligent</a></h1>
+                        <nav><ul>
+                                                <li class="active"><a href="/category/data-science.html">Data Science</a></li>
+                        </ul></nav>
+                </header><!-- /#banner -->
+  <section id="content" class="body">
+    <article>
+      <header>
+        <h1 class="entry-title">
+          <a href="/why-you-need-pipelines-with-sklearn.html" rel="bookmark"
+             title="Permalink to Why You Need Pipelines with SKLearn">Why You Need Pipelines with SKLearn</a></h1>
+      </header>
+
+      <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2021-10-12T20:30:00+03:00">
+                Published: Tue 12 October 2021
+        </abbr>
+
+                <address class="vcard author">
+                        By                                 <a class="url fn" href="/author/nathan-begbie.html">Nathan Begbie</a>
+                </address>
+        <p>In <a href="/category/data-science.html">Data Science</a>.</p>
+        
+</footer><!-- /.post-info -->        <p>SKLearn is an immensley popular tool for machine learning. One of its slightly more unwieldy tools is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">pipelines</a>.
+It is also overlooked when first teaching people to use SKLearn in introductory courses to machine learning.
+This is a real shame, because it can help prevent one of the most common errors that those who dabbel in data
+science commit - data leakage.</p>
+<p>Data leakage in this case, happens when we infer values from a data set.
+However, when we split the data into test and train data sets, we sometimes forget that we're not supposed to be able
+to peek in at the test data set <em>at all</em>.
+This means that we cannot use that data to inform our thinking about how to approach the problem.
+So a classic example of this occurs when we infer missing values from a data set.
+If you infer missing values by, say replacing the missing values with the median value and <em>then</em> splitting
+the data set in to test and train, then we have already taken a peek and 'learned' from data that we are soon going to be asked to predict.
+The result is that your model's performance will now be ever so over-stated.</p>
+<p>However, we're often taught about the dangers of data leakage, warned against every doing it and not really given the tools to prevent shooting ourselves in the foot.
+Because inevitably you're going to start using cross-validatiton, where you take your training data and split it in to further chunks of test and train data.
+When this happens, any values that you inferred for say the mean or median value are leaking data.
+This is what Pipelines can help us to avoid from the get-go!</p>
+<p>By setting up the <em>process</em> that needs to occur to the data, and then giving the training data to something like <code>GridSearch</code>, which uses cross-validation to determine what the best model or approach might be, then we avoid the problem altogether. The Pipeline ensures that the median value generated each time has not been influenced by the test data.</p>
+<p>And <em>that</em> children is why we always use a Pipeline.</p>
+      </div><!-- /.entry-content -->
+
+    </article>
+  </section>
+                <section id="extras" class="body">
+                                <div class="blogroll">
+                                        <h2>links</h2>
+                                        <ul>
+                                                        <li><a href="https://getpelican.com/">Pelican</a></li>
+                                                        <li><a href="https://www.python.org/">Python.org</a></li>
+                                                        <li><a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
+                                                        <li><a href="#">You can modify those links in your config file</a></li>
+                                        </ul>
+                                </div><!-- /.blogroll -->
+                                <div class="social">
+                                        <h2>social</h2>
+                                        <ul>
+
+                                                        <li><a href="#">You can add links in your config file</a></li>
+                                                        <li><a href="#">Another social link</a></li>
+                                        </ul>
+                                </div><!-- /.social -->
+                </section><!-- /#extras -->
+
+                <footer id="contentinfo" class="body">
+                        <address id="about" class="vcard body">
+                                Proudly powered by <a rel="nofollow" href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a rel="nofollow" href="https://www.python.org/">Python</a>.
+                        </address><!-- /#about -->
+
+                        <p>The theme is by <a rel="nofollow" href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+                </footer><!-- /#contentinfo -->
+
+        </body>
+</html>
