@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles.css" />
+        <title>Why You Need Pipelines with SKLearn - Artificially Intelligent</title>
+        <script>
+            !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Ce Os As Te Cs Fs capture Ye calculateEventProperties Ls register register_once register_for_session unregister unregister_for_session qs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty zs js createPersonProfile Us Rs Bs opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Ds debug L Ns getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+            posthog.init('phc_cca9KKKjIkYHqpKIZZjPheubHG1m8QmZ9bOOOyQU51G', {
+                api_host: 'https://eu.i.posthog.com',
+                defaults: '2025-05-24',
+                person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+            })
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Artificially Intelligent</h1>
+        </header>
+
+        <main>
+            <article>
+                <h2>Why You Need Pipelines with SKLearn</h2>
+                <p><em>Published: October 12, 2021 | Category: Data Science</em></p>
+
+                <p>SKLearn is an immensley popular tool for machine learning. One of its slightly more unwieldy tools is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">pipelines</a>.
+                It is also overlooked when first teaching people to use SKLearn in introductory courses to machine learning.
+                This is a real shame, because it can help prevent one of the most common errors that those who dabbel in data
+                science commit - data leakage.</p>
+
+                <p>Data leakage in this case, happens when we infer values from a data set.
+                However, when we split the data into test and train data sets, we sometimes forget that we're not supposed to be able
+                to peek in at the test data set <em>at all</em>.
+                This means that we cannot use that data to inform our thinking about how to approach the problem.
+                So a classic example of this occurs when we infer missing values from a data set.
+                If you infer missing values by, say replacing the missing values with the median value and <em>then</em> splitting
+                the data set in to test and train, then we have already taken a peek and 'learned' from data that we are soon going to be asked to predict.
+                The result is that your model's performance will now be ever so over-stated.</p>
+
+                <p>However, we're often taught about the dangers of data leakage, warned against every doing it and not really given the tools to prevent shooting ourselves in the foot.
+                Because inevitably you're going to start using cross-validatiton, where you take your training data and split it in to further chunks of test and train data.
+                When this happens, any values that you inferred for say the mean or median value are leaking data.
+                This is what Pipelines can help us to avoid from the get-go!</p>
+
+                <p>By setting up the <em>process</em> that needs to occur to the data, and then giving the training data to something like <code>GridSearch</code>, which uses cross-validation to determine what the best model or approach might be, then we avoid the problem altogether. The Pipeline ensures that the median value generated each time has not been influenced by the test data.</p>
+
+                <p>And <em>that</em> children is why we always use a Pipeline.</p>
+            </article>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Artificially Intelligent</p>
+        </footer>
+    </body>
+</html>

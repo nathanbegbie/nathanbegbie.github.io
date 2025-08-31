@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles.css" />
+        <title>Searching Files that are part of a Pull Request - Artificially Intelligent</title>
+        <script>
+            !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Ce Os As Te Cs Fs capture Ye calculateEventProperties Ls register register_once register_for_session unregister unregister_for_session qs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty zs js createPersonProfile Us Rs Bs opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Ds debug L Ns getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+            posthog.init('phc_cca9KKKjIkYHqpKIZZjPheubHG1m8QmZ9bOOOyQU51G', {
+                api_host: 'https://eu.i.posthog.com',
+                defaults: '2025-05-24',
+                person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+            })
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Artificially Intelligent</h1>
+        </header>
+
+        <main>
+            <article>
+                <h2>Searching Files that are part of a Pull Request</h2>
+                <p><em>Published: November 9, 2021 | Category: Data Science</em></p>
+
+                <blockquote>
+                    <p>In this article, I'll combine a couple of helpful command line tools together. If you're not familiar with these tools, I have included the necessary links to help you get started. This is also specific to a unix environment - apologies to Windows users.</p>
+                </blockquote>
+
+                <p>Being able to use some command line tools can give us superpowers when it comes to quickly finding relevant material.
+                Today I wanted to search only the files that had been changed within a particular pull request.
+                If you're using the web tool, you can simply open the pull request <code>/files</code> tab and <code>cmd/ctrl + f</code> to find the code you're looking for.
+                However, if you want to do this from the command line, it gets a bit more complicated.</p>
+
+                <ul>
+                    <li>Git does not inherently 'know' what a pull request is, it's something that Github manages</li>
+                    <li>There doesn't seem to be an easy way to convert a branch name to a pull request number</li>
+                    <li>Shell commands. They get messy.</li>
+                </ul>
+
+                <p>I'll slowly build up and explain the command that I eventually ended up with.</p>
+
+                <h2>Get a Pull Request ID from a branch name</h2>
+
+                <p>Firstly, we're on a specific branch. To get the name of that branch we run:</p>
+
+                <pre><code class="language-shell">&gt; git branch --show-current
+reconfigure-styles</code></pre>
+
+                <p>Then we need to link the branch name to the pull request.
+                To get this information, we use the <a href="https://cli.github.com/"><code>gh command line tool</code></a> from Github.</p>
+
+                <pre><code class="language-shell">&gt; gh pr list</code></pre>
+
+                <p>This will launch an interactive shell that you will need to hit <code>q</code> to exit.
+                It looks something like this:</p>
+
+                <pre><code class="language-shell">#1  Ensure Blog Publishes Correctly                         ensure-blog-publishes-correctly
+#5  Reconfigure styles of Blog                              reconfigure-styles</code></pre>
+
+                <p>If you want the output to appear directly on the command line, we can pipe the results of the <code>cat</code> command like so:</p>
+
+                <pre><code class="language-shell">&gt; gh pr list | cat
+1  Ensure Blog Publishes Correctly                         ensure-blog-publishes-correctly
+5  Reconfigure styles of Blog                              reconfigure-styles</code></pre>
+
+                <p>Great! So how do combine these bits of information together?
+                We can use grep to filter the results using the current branch name:</p>
+
+                <pre><code class="language-shell">&gt; gh pr list | grep $(git branch --show-current)
+5  Reconfigure styles of Blog                              reconfigure-styles</code></pre>
+
+                <p>Woohoo! But when we use <code>gh</code> it expects that we use <em>just</em> the PR number.
+                To get this, we reach for the handy tool <code>awk</code>.
+                <code>awk</code> is great for working with tabular data.
+                It allows us to concisely request a specific column of data with <code>awk '{print $NUMBER_OF_COLUMN_WE_WANT}'</code>.
+                In this case, we want the first column.</p>
+
+                <pre><code class="language-shell">&gt; gh pr list | grep $(git branch --show-current) | awk '{print $1}'
+5</code></pre>
+
+                <h2>Getting File Names from a Pull Request Number</h2>
+
+                <p>So now we have the current PR number from the branch we currently have checked out.
+                Next, we want to get all of the files that were changed within a particular PR.
+                In this case, we can use <code>gh</code> in combination with a tool called <code>jq</code> to get all of the file names.
+                I found <a href="https://stackoverflow.com/a/68682405/3623641">this answer on StackOverflow</a> immensely helpful and will attempt to break down what it suggests:</p>
+
+                <pre><code class="language-shell">&gt; gh pr view 5 --json files --jq '.files.[].path'</code></pre>
+
+                <p><code>gh pr view 2615</code> just gives us details about the pull request in the command line.
+                But here we want to be more specific about the information we want back.
+                So we request a JSON response with details about the <code>files</code> in the pull request.
+                Hence the <code>--json files</code>.
+                (I also pipe to <code>cat</code> here to avoid the interactive shell)</p>
+
+                <pre><code class="language-shell">&gt; gh pr view 5 --json files | cat
+{
+  "files": [
+    {
+      "path": "styles/index.css",
+      "additions": 110,
+      "deletions": 0
+    },
+    {
+      "path": "docs/style_guide.md",
+      "additions": 22,
+      "deletions": 5
+    },
+    {
+      "path": "README.md",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "index.html",
+      "additions": 55,
+      "deletions": 3
+    }
+  ]
+}</code></pre>
+
+                <p>Finally, because we don't want to deal with a whole JSON blob we use the <a href="https://stedolan.github.io/jq/"><code>jq</code></a> flag which reference <a href="https://stedolan.github.io/jq/tutorial/">a very nifty tool</a> that helps us get information from JSON with very concise expressions.
+                So by adding <code>--jq '.files.[].path'</code> we can extract all the paths in each JSON blob.</p>
+
+                <p>This leaves us with:</p>
+
+                <pre><code class="language-shell">&gt; gh pr view 5 --json files --jq '.files.[].path'
+styles/index.css
+docs/style_guide.md
+README.md
+index.html</code></pre>
+
+                <p>We can then pipe these file names in to a tool like grep.
+                But we need to combine our first two commands together.
+                There are a few ways that we can do this, but I've chosen this way becaue I find that variable names help future me understand what the heck I was trying to do.
+                To be completely honest, there may be a better/safer/more performant way - I'm sure someone can send me an angry email correcting me.</p>
+
+                <pre><code class="language-shell">&gt; PR_NUMBER=$(gh pr list | grep $(git branch --show-current) | awk '{print $1}') && \
+    gh pr view $PR_NUMBER --json files --jq '.files.[].path' | cat
+styles/index.css
+docs/style_guide.md
+README.md
+index.html</code></pre>
+
+                <h2>Actually searching</h2>
+
+                <p>We're almost there!
+                Finally, we will embed the file names within the git grep command.
+                We can pass each file name to <code>grep</code> using <code>xargs</code>:</p>
+
+                <pre><code class="language-shell">&gt; PR_NUMBER=$(gh pr list | grep $(git branch --show-current) | awk '{print $1}') && \
+    gh pr view $PR_NUMBER --json files --jq '.files.[].path' | xargs grep #00FF00
+styles/index.css:      background-color: #00FF00;
+styles/index.css:      color: #00FF00;
+styles/index.css:      background-color: #00FF00;
+styles/index.css:      &lt;tagname style="color:#00FF00;"&gt;</code></pre>
+
+                <p>And there we have it!</p>
+
+                <h2>Some Final Thoughts</h2>
+
+                <p>I hope that this has deomnstrated how we can combine a couple of simple tools together to quickly accomplish what we want.
+                There are some caveats though.
+                This script is not robust to failure and follows what we call the 'happy path'.
+                This means that if I'm in the wrong directory, or in a branch that doesn't have a pull request associated with it, the code breaks and I won't be explicitly told where or why.
+                That's okay, because I don't expect anyone else to use this code in a production setting.
+                If there were some more complicated logic flows, you might want to use a scripting language other than bash.
+                This comes with tradeoffs though so think it through - would you trade off the 'it should run in most shells' for 'it clearly communciates why something is wrong'?</p>
+
+                <p>Remeber, command line tools are really nifty and useful to combine, so use liberally to solve your specific use case.
+                Just do not expect that everyone will understand or love your weird and wonderful code concoctions as much as you do. 😉</p>
+            </article>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Artificially Intelligent</p>
+        </footer>
+    </body>
+</html>
