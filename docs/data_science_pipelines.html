@@ -3,8 +3,24 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta property="article:published_time" content="2021-10-12T00:00:00Z">
+        <meta property="article:modified_time" content="2025-09-01T00:00:00Z">
+        <meta name="last-modified" content="2025-09-01T00:00:00Z">
         <link rel="stylesheet" href="styles.css" />
         <title>Why You Need Pipelines with SKLearn - Artificially Intelligent</title>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": "Why You Need Pipelines with SKLearn",
+          "datePublished": "2021-10-12",
+          "dateModified": "2025-09-01",
+          "author": {
+            "@type": "Person",
+            "name": "Nathan Begbie"
+          }
+        }
+        </script>
         <script>
             !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Ce Os As Te Cs Fs capture Ye calculateEventProperties Ls register register_once register_for_session unregister unregister_for_session qs getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty zs js createPersonProfile Us Rs Bs opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Ds debug L Ns getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
             posthog.init('phc_cca9KKKjIkYHqpKIZZjPheubHG1m8QmZ9bOOOyQU51G', {
@@ -22,11 +38,11 @@
         <main>
             <article>
                 <h2>Why You Need Pipelines with SKLearn</h2>
-                <p><em>Published: October 12, 2021 | Category: Data Science</em></p>
+                <p><em>Published: October 12, 2021 | | Updated: 1 September, 2025 | Category: Data Science</em></p>
 
                 <p>SKLearn is an immensley popular tool for machine learning. One of its slightly more unwieldy tools is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">pipelines</a>.
                 It is also overlooked when first teaching people to use SKLearn in introductory courses to machine learning.
-                This is a real shame, because it can help prevent one of the most common errors that those who dabbel in data
+                This is a real shame, because it can help prevent one of the most common errors that those who dabble in data
                 science commit - data leakage.</p>
 
                 <p>Data leakage in this case, happens when we infer values from a data set.
