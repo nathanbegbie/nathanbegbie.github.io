@@ -17,11 +17,20 @@ A static blog website a technical blog, written in raw HTML and CSS without a fr
 - Add id attributes to headings - Enable table of contents navigation
 - Keep the styling of the site simple and easy to read
 - Always ensure that the following tags are included in the <head> of each article
+  - `<html lang="en">` - Set appropriate language
   - title
-  - <meta name="description" content="..." >
-  - <meta property="article:published_time" content="...">
-  - If updated, include: <meta property="article:modified_time" content="...">
-  - If updated, include: <meta name="last-modified" content="...">
+  - `<meta name="viewport" content="width=device-width, initial-scale=1">`
+  - `<meta name="description" content="..." >`
+  - `<meta property="article:published_time" content="...">`
+  - `<meta name="theme-color" content="#...">`
+  - `<link rel="canonical" href="...">`
+  - If updated, include: `<meta property="article:modified_time" content="...">`
+  - If updated, include: `<meta name="last-modified" content="...">`
+  - Open Graph tags for social sharing:
+    - `<meta property="og:title" content="...">`
+    - `<meta property="og:description" content="...">`
+    - `<meta property="og:type" content="article">`
+    - `<meta property="og:url" content="...">`
   - Any other <meta> tags that you think are relevant and can increase SEO
 
 ## Project Structure
@@ -58,3 +67,13 @@ Explicitly tell search engines about article updates
 - Use the default document flow, rely on margins for spacing between elements, padding for internal spacing and max-width + auto margins for centering
 - Keep all styles in the `docs/styles.css` files, unless instructed otherwise do not use inline styles
 - Use CSS nesting where possible
+- Use `font-display: swap` for web fonts to prevent FOIT (Flash of Invisible Text)
+- Implement CSS containment (`contain: layout style paint`) for article blocks to improve rendering performance
+- Consider critical CSS inlining for above-the-fold content
+
+# Performance Optimizations
+- Add `loading="lazy"` for images below the fold
+- Use `rel="preconnect"` for external resources (fonts, analytics, etc.)
+- Compress images and use modern formats (WebP with fallbacks)
+- Add proper cache headers for static assets
+- Minimize HTTP requests by combining resources where possible
